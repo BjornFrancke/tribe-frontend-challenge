@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {computed, reactive, ref} from "vue";
+import { computed, reactive, ref } from "vue";
 import Cart from "@/components/Cart/Cart.vue";
-import type {BasketItem, Product} from "@/types";
-import {productData} from "@/ProductData";
+import type { BasketItem, Product } from "@/types";
+import { productData } from "@/productData";
 
 const basket = reactive<BasketItem[]>([]);
 const isCartOpen = ref(false);
@@ -23,7 +23,7 @@ function addToCart(product: Product): void {
   if (basketItem) {
     basketItem.quantity++;
   } else {
-    basket.push({item: product, quantity: 1});
+    basket.push({ item: product, quantity: 1 });
   }
 }
 
@@ -45,16 +45,17 @@ function clearBasket(): void {
 
 // Computed: total price of the basket
 const totalPrice = computed(() => {
-  return basket.reduce((total, {item, quantity}) => total + item.price * quantity, 0);
+  return basket.reduce(
+    (total, { item, quantity }) => total + item.price * quantity,
+    0
+  );
 });
 
 // Computed: total items in the cart
 const itemsInCart = computed(() => {
-  return basket.reduce((total, {quantity}) => total + quantity, 0);
+  return basket.reduce((total, { quantity }) => total + quantity, 0);
 });
-
 </script>
-
 
 <template>
   <header>
@@ -68,10 +69,18 @@ const itemsInCart = computed(() => {
         <div class="cart-div">
           <button @click="toggleCart">
             <div class="cart-container">
-              <span class="cart-badge" v-if="itemsInCart > 0">{{ itemsInCart }}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20">
+              <span class="cart-badge" v-if="itemsInCart > 0">{{
+                itemsInCart
+              }}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20px"
+                height="20px"
+                viewBox="0 0 20 20"
+              >
                 <path
-                    d="M1 1.75A.75.75 0 0 1 1.75 1h1.628a1.75 1.75 0 0 1 1.734 1.51L5.18 3a65.3 65.3 0 0 1 13.36 1.412a.75.75 0 0 1 .58.875a49 49 0 0 1-1.618 6.2a.75.75 0 0 1-.712.513H6q-.171 0-.336.022A2.5 2.5 0 0 0 3.708 13.5H17.25a.75.75 0 0 1 0 1.5H2.76a.75.75 0 0 1-.748-.807a4 4 0 0 1 2.716-3.486L3.626 2.716a.25.25 0 0 0-.248-.216H1.75A.75.75 0 0 1 1 1.75M6 17.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m9.5 1.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3"/>
+                  d="M1 1.75A.75.75 0 0 1 1.75 1h1.628a1.75 1.75 0 0 1 1.734 1.51L5.18 3a65.3 65.3 0 0 1 13.36 1.412a.75.75 0 0 1 .58.875a49 49 0 0 1-1.618 6.2a.75.75 0 0 1-.712.513H6q-.171 0-.336.022A2.5 2.5 0 0 0 3.708 13.5H17.25a.75.75 0 0 1 0 1.5H2.76a.75.75 0 0 1-.748-.807a4 4 0 0 1 2.716-3.486L3.626 2.716a.25.25 0 0 0-.248-.216H1.75A.75.75 0 0 1 1 1.75M6 17.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m9.5 1.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3"
+                />
               </svg>
             </div>
           </button>
@@ -79,10 +88,14 @@ const itemsInCart = computed(() => {
       </div>
 
       <ul class="items-ul">
-        <li v-for="product in productData" :key="product.id" class="product-item">
+        <li
+          v-for="product in productData"
+          :key="product.id"
+          class="product-item"
+        >
           <div class="item">
             <h3>{{ product.name }}</h3>
-            <img :src="product.img" :alt="product.name" class="product-img"/>
+            <img :src="product.img" :alt="product.name" class="product-img" />
             <div class="product-bottom">
               <p class="product-description">{{ product.description }}</p>
               <div class="product-price" @click="addToCart(product)">
@@ -96,17 +109,16 @@ const itemsInCart = computed(() => {
     </section>
 
     <Cart
-        v-if="isCartOpen"
-        @toggleCart="toggleCart"
-        :basket="basket"
-        :totalPrice="totalPrice"
-        @addToCart="addToCart"
-        @removeFromBasket="removeFromBasket"
-        @clearBasket="clearBasket"
+      v-if="isCartOpen"
+      @toggleCart="toggleCart"
+      :basket="basket"
+      :totalPrice="totalPrice"
+      @addToCart="addToCart"
+      @removeFromBasket="removeFromBasket"
+      @clearBasket="clearBasket"
     />
   </main>
 </template>
-
 
 <style scoped>
 header {
@@ -120,7 +132,8 @@ main {
   padding: 20px;
 }
 
-h1, h2 {
+h1,
+h2 {
   color: black;
   font-weight: 700;
 }
@@ -137,18 +150,17 @@ h1, h2 {
 }
 
 .cart-div button {
-  background-color: #E6E8DD;
-  border: #B6BAB0 solid 1px;
+  background-color: #e6e8dd;
+  border: #b6bab0 solid 1px;
   padding: 10px 12px;
   border-radius: 8px;
 }
 
 .cart-div button:hover {
   background-color: black;
-  color: #B9FF82;
-  fill: #B9FF82
+  color: #b9ff82;
+  fill: #b9ff82;
 }
-
 
 .cart-container {
   position: relative;
@@ -161,7 +173,7 @@ h1, h2 {
   top: -10px;
   right: -10px;
   background-color: black;
-  color: #B9FF82;
+  color: #b9ff82;
   padding: 2px 6px;
   border-radius: 50%;
   font-size: 12px;
@@ -169,16 +181,13 @@ h1, h2 {
 }
 
 .cart-container:hover .cart-badge {
-  background-color: #E6E8DD;
+  background-color: #e6e8dd;
   color: black;
 }
-
-
 
 main {
   border: #f1f1f1 solid 1px;
   background-color: white;
-
 }
 
 .products {
@@ -204,16 +213,14 @@ main {
   }
 }
 
-
 .product-item {
-  background-color: #F6F6F6;
+  background-color: #f6f6f6;
   padding: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
 }
-
 
 .item {
   display: flex;
@@ -224,7 +231,6 @@ main {
 .item h3 {
   margin-top: 0;
 }
-
 
 .product-price {
   display: flex;
@@ -237,37 +243,33 @@ main {
   align-items: center;
   justify-content: center;
   column-gap: 10px;
-  background-color: #E6E8DD;
-  border: #B6BAB0 solid 1px;
+  background-color: #e6e8dd;
+  border: #b6bab0 solid 1px;
   padding: 2px 8px;
   color: black;
   user-select: none;
   cursor: pointer;
-
 }
 
 .product-price a {
   font-size: 24px;
   color: black;
   margin-bottom: 4px;
-
 }
 
 .product-price:hover a {
-  color: #B9FF82;
+  color: #b9ff82;
 }
 
 .product-price:hover {
   background-color: black;
-  color: #B9FF82;
-
+  color: #b9ff82;
 }
 
 .price {
   font-weight: bold;
   margin: 0;
 }
-
 
 .product-img {
   height: 150px;
@@ -285,5 +287,4 @@ main {
   width: 100%;
   align-items: center;
 }
-
 </style>
