@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {computed, reactive, ref} from "vue";
-import Cart from "@/components/Cart.vue";
+import Cart from "@/components/Cart/Cart.vue";
 
 interface Product {
   id: string,
@@ -104,7 +104,22 @@ const productData: Products = [{
   <main>
 
     <section class="products">
+      <div class="products-top">
       <h2>Available Products</h2>
+        <div class="cart-div">
+          <button @click="isCartOpen = !isCartOpen">
+            <div class="cart-container">
+
+              <span class="cart-badge" v-if="itemsInCart > 0">{{ itemsInCart }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20">
+                <path
+                    d="M1 1.75A.75.75 0 0 1 1.75 1h1.628a1.75 1.75 0 0 1 1.734 1.51L5.18 3a65.3 65.3 0 0 1 13.36 1.412a.75.75 0 0 1 .58.875a49 49 0 0 1-1.618 6.2a.75.75 0 0 1-.712.513H6q-.171 0-.336.022A2.5 2.5 0 0 0 3.708 13.5H17.25a.75.75 0 0 1 0 1.5H2.76a.75.75 0 0 1-.748-.807a4 4 0 0 1 2.716-3.486L3.626 2.716a.25.25 0 0 0-.248-.216H1.75A.75.75 0 0 1 1 1.75M6 17.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m9.5 1.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3"/>
+              </svg>
+            </div>
+          </button>
+        </div>
+
+      </div>
       <ul class="items-ul">
         <li v-for="product in productData" :key="product.id" class="product-item">
           <div class="item">
@@ -124,19 +139,6 @@ const productData: Products = [{
       </ul>
     </section>
 
-
-    <div class="cart-div">
-      <button @click="isCartOpen = !isCartOpen">
-        <div class="cart-container">
-
-          <span class="cart-badge" v-if="itemsInCart > 0">{{ itemsInCart }}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20">
-            <path
-                d="M1 1.75A.75.75 0 0 1 1.75 1h1.628a1.75 1.75 0 0 1 1.734 1.51L5.18 3a65.3 65.3 0 0 1 13.36 1.412a.75.75 0 0 1 .58.875a49 49 0 0 1-1.618 6.2a.75.75 0 0 1-.712.513H6q-.171 0-.336.022A2.5 2.5 0 0 0 3.708 13.5H17.25a.75.75 0 0 1 0 1.5H2.76a.75.75 0 0 1-.748-.807a4 4 0 0 1 2.716-3.486L3.626 2.716a.25.25 0 0 0-.248-.216H1.75A.75.75 0 0 1 1 1.75M6 17.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m9.5 1.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3"/>
-          </svg>
-        </div>
-      </button>
-    </div>
     <Cart v-if="isCartOpen"
           @toggleCart="isCartOpen = false"
           :basket="basket"
@@ -167,6 +169,12 @@ h1, h2 {
   font-weight: 700;
 }
 
+.products-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .cart-div {
   position: relative;
   display: inline-block;
@@ -175,9 +183,7 @@ h1, h2 {
 .cart-div button {
   background-color: #E6E8DD;
   border: #B6BAB0 solid 1px;
-  padding: 10px;
-  padding-left: 12px;
-  padding-right: 12px;
+  padding: 10px 12px;
   border-radius: 8px;
 }
 
@@ -262,39 +268,13 @@ main {
 }
 
 .item h3 {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
-.item-btn {
-  display: flex;
-  flex-direction: row;
-  margin-top: 10px;
-}
 
-.item-btn a {
-  padding: 8px 15px;
-  background-color: #E6E8DD;
-  color: black;
-  font-size: 20px;
-  border: none;
-  margin: 2px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
 
-.item-btn a.plus {
-  border-radius: 5px 0 0 5px;
-}
 
-.item-btn a.minus {
-  border-radius: 0 5px 5px 0;
-}
 
-.item-btn a:hover {
-  background-color: black;
-  color: #B9FF82;
-}
 
 .product-price {
   display: flex;
@@ -307,12 +287,9 @@ main {
   align-items: center;
   justify-content: center;
   column-gap: 10px;
-  padding-left: 8px;
-  padding-right: 8px;
   background-color: #E6E8DD;
   border: #B6BAB0 solid 1px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding: 2px 8px;
   color: black;
   user-select: none;
   cursor: pointer;
