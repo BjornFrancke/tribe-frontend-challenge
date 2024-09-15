@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import "./cart.css"
+import type {BasketItem} from "@/types";
 
-interface BasketItem {
-  item: {
-    id: string;
-    name: string;
-    price: number;
-  };
-  quantity: number;
-}
 
 interface Props {
   basket: BasketItem[];
@@ -16,7 +9,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
 defineEmits(['toggleCart', 'addToCart', 'removeFromBasket', 'clearBasket']);
 
 </script>
