@@ -1,15 +1,21 @@
 @import './base.css';
 
 
-:root {
-background-color: #E6E8DD;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+}
+
+
+ul {
+  padding: 0;
+}
+
+li {
+  list-style: none;
+  margin-bottom: 15px;
 }
 
 a,

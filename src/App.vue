@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
-import {computed, reactive} from "vue";
+import {computed, reactive, ref} from "vue";
+import Cart from "@/components/Cart.vue";
 
 interface Product {
   id: string,
@@ -11,6 +12,11 @@ interface Product {
 }
 
 let basket = reactive([])
+let isCartOpen: boolean = ref(false)
+
+function toggleCart() {
+  isCartOpen = false
+}
 
 function addToCart(newProduct): void {
   console.log("Adding " + newProduct.name)
@@ -30,13 +36,13 @@ function removeFromBasket(item: Product): void {
     console.log("Removing 1");
     if (basketItem.quantity === 0) {
       const index = basket.indexOf(basketItem);
-      basket.splice(index, 1); // Removes the item when quantity is 0
+      basket.splice(index, 1);
     }
   }
 }
 
 function clearBasket(): void {
-  basket.splice(0, basket.length); // Clears all items
+  basket.splice(0, basket.length);
 }
 
 const totalPrice = computed(() => {
@@ -44,6 +50,14 @@ const totalPrice = computed(() => {
   basket.map((product) => {
     total += product.item.price * product.quantity;
   });
+  return total;
+})
+
+const itemsInCart = computed(() => {
+  let total = 0;
+  basket.map((product) => {
+    total += product.quantity;
+  })
   return total;
 })
 
@@ -60,9 +74,23 @@ const productData: Products = [{
   {
     id: "0002",
     name: "Pizza",
-    description: "Baked in stone oven",
+    description: "Baked in a stone oven",
     price: 65,
     img: "src/assets/pizza-time-tasty-homemade-traditional-pizza-italian-recipe.png"
+  },
+  {
+    id: "0003",
+    name: "Sandwich",
+    description: "Meats and cheese",
+    price: 49,
+    img: "src/assets/tasty-sandwich-with-vegetables-ham-cheese.png"
+  },
+  {
+    id: "0004",
+    name: "Garlic bread",
+    description: "Very garlicky",
+    price: 49,
+    img: "src/assets/png-baked-garlic-bread-isolated-white-background-top-view.png"
   }
 ]
 
@@ -74,47 +102,50 @@ const productData: Products = [{
   </header>
 
   <main>
+
     <section class="products">
       <h2>Available Products</h2>
-      <ul>
+      <ul class="items-ul">
         <li v-for="product in productData" :key="product.id" class="product-item">
           <div class="item">
             <h3>{{ product.name }}</h3>
-            <img :src="product.img" :alt="product.name" class="product-img" />
+            <img :src="product.img" :alt="product.name" class="product-img"/>
             <div class="product-bottom">
-<p class="product-description">{{product.description}}</p>
+              <p class="product-description">{{ product.description }}</p>
+              <a @click="addToCart(product)">
               <div class="product-price">
-                <a @click="addToCart(product)">+</a>
-            <p class="price">{{ product.price }} kr.</p>
+                <a>+</a>
+                <p class="price">{{ product.price }} kr.</p>
               </div>
-            </div>
-            <div class="item-btn">
-<!--              <a class="plus" @click="addToCart(product)">+</a>
-              <a class="minus" @click="removeFromBasket(product)">-</a>-->
+              </a>
             </div>
           </div>
         </li>
       </ul>
     </section>
 
-    <section class="basket">
-      <h2>Your Basket</h2>
-      <ul>
-        <li v-for="basketItem in basket" :key="basketItem.item.id" class="basket-item">
-          <div class="basket-item-details">
-            <span>{{ basketItem.item.name }} - {{ basketItem.quantity }} x {{ basketItem.item.price }} kr.</span>
-            <span class="subtotal">{{basketItem.item.price * basketItem.quantity}} kr.</span>
-            <div class="item-btn">
-              <button @click="addToCart(basketItem.item)">+</button>
-              <button @click="removeFromBasket(basketItem.item)">-</button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <p v-if="basket.length === 0" class="empty-basket">Your basket is empty.</p>
-      <p class="total">Total: {{ totalPrice }} kr.</p>
-      <button @click="clearBasket" class="clear-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21q.512.078 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48 48 0 0 0-3.478-.397m-12 .562q.51-.088 1.022-.165m0 0a48 48 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a52 52 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a49 49 0 0 0-7.5 0"/></svg></button>
-    </section>
+
+    <div class="cart-div">
+      <button @click="isCartOpen = !isCartOpen">
+        <div class="cart-container">
+
+          <span class="cart-badge" v-if="itemsInCart > 0">{{ itemsInCart }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20">
+            <path
+                d="M1 1.75A.75.75 0 0 1 1.75 1h1.628a1.75 1.75 0 0 1 1.734 1.51L5.18 3a65.3 65.3 0 0 1 13.36 1.412a.75.75 0 0 1 .58.875a49 49 0 0 1-1.618 6.2a.75.75 0 0 1-.712.513H6q-.171 0-.336.022A2.5 2.5 0 0 0 3.708 13.5H17.25a.75.75 0 0 1 0 1.5H2.76a.75.75 0 0 1-.748-.807a4 4 0 0 1 2.716-3.486L3.626 2.716a.25.25 0 0 0-.248-.216H1.75A.75.75 0 0 1 1 1.75M6 17.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m9.5 1.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+    <Cart v-if="isCartOpen"
+          @toggleCart="isCartOpen = false"
+          :basket="basket"
+          :totalPrice="totalPrice"
+          @addToCart="addToCart"
+          @removeFromBasket="removeFromBasket"
+          @clearBasket="clearBasket"
+
+    />
   </main>
 </template>
 
@@ -136,14 +167,50 @@ h1, h2 {
   font-weight: 700;
 }
 
-ul {
-  padding: 0;
+.cart-div {
+  position: relative;
+  display: inline-block;
 }
 
-li {
-  list-style: none;
-  margin-bottom: 15px;
+.cart-div button {
+  background-color: #E6E8DD;
+  border: #B6BAB0 solid 1px;
+  padding: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
+  border-radius: 8px;
 }
+
+.cart-div button:hover {
+  background-color: black;
+  color: #B9FF82;
+  fill: #B9FF82
+}
+
+
+.cart-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: black;
+  color: #B9FF82;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cart-container:hover .cart-badge {
+  background-color: #E6E8DD;
+  color: black;
+}
+
 
 /* Styling for product section */
 
@@ -154,14 +221,39 @@ main {
 }
 
 .products {
-  width: 40%;
+  width: 100%;
 }
+
+.products ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Two items per row */
+  gap: 20px; /* Adds spacing between grid items */
+  padding: 0;
+}
+
+@media (max-width: 970px) {
+  .products ul {
+    grid-template-columns: repeat(2, 1fr); /* Two items per row */
+  }
+}
+
+/* On small screens (like mobile), display one item per row */
+@media (max-width: 675px) {
+  .products ul {
+    grid-template-columns: 1fr; /* One item per row */
+  }
+}
+
 
 .product-item {
   background-color: #F6F6F6;
   padding: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .item {
   display: flex;
@@ -180,12 +272,12 @@ main {
 }
 
 .item-btn a {
-  padding: 10px 15px;
+  padding: 8px 15px;
   background-color: #E6E8DD;
   color: black;
   font-size: 20px;
   border: none;
-  margin: 0 5px;
+  margin: 2px;
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.3s ease;
@@ -249,10 +341,6 @@ main {
   margin: 0;
 }
 
-/* Styling for basket section */
-.basket {
-  width: 40%;
-}
 
 .basket-item-details {
   display: flex;
@@ -267,18 +355,20 @@ main {
   font-weight: bold;
 }
 
+
 .product-img {
   height: 150px;
   width: auto;
-  border-radius: 4px;
   margin-left: auto;
   margin-right: auto;
+  border-radius: 4px;
+  margin-bottom: 15px;
 }
 
 .product-bottom {
   display: flex;
-  width: 100%;
   justify-content: space-between;
+  width: 100%;
   align-items: center;
 }
 
