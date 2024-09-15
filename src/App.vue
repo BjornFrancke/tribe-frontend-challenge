@@ -1,97 +1,89 @@
 <script setup lang="ts">
-
 import {computed, reactive, ref} from "vue";
 import Cart from "@/components/Cart/Cart.vue";
+import type {BasketItem, Product} from "@/types";
 
-interface Product {
-  id: string,
-  name: string,
-  description: string,
-  price: number,
-  img: string,
+const basket = reactive<BasketItem[]>([]);
+const isCartOpen = ref(false);
+
+// Helper function to find basket item by product
+function findBasketItem(product: Product) {
+  return basket.find((b) => b.item.id === product.id);
 }
 
-let basket = reactive([])
-let isCartOpen: boolean = ref(false)
-
+// Toggle cart visibility
 function toggleCart() {
-  isCartOpen = false
+  isCartOpen.value = !isCartOpen.value;
 }
 
-function addToCart(newProduct): void {
-  const basketItem = basket.find(b => b.item.name === newProduct.name);
+// Add a product to the cart
+function addToCart(product: Product): void {
+  const basketItem = findBasketItem(product);
   if (basketItem) {
     basketItem.quantity++;
   } else {
-    basket.push({item: newProduct, quantity: 1});
+    basket.push({item: product, quantity: 1});
   }
 }
 
-function removeFromBasket(item: Product): void {
-  const basketItem = basket.find(b => b.item.name === item.name);
+// Remove a product from the cart
+function removeFromBasket(product: Product): void {
+  const basketItem = findBasketItem(product);
   if (basketItem && basketItem.quantity > 0) {
     basketItem.quantity--;
     if (basketItem.quantity === 0) {
-      const index = basket.indexOf(basketItem);
-      basket.splice(index, 1);
+      basket.splice(basket.indexOf(basketItem), 1);
     }
   }
 }
 
+// Clear all items in the cart
 function clearBasket(): void {
   basket.splice(0, basket.length);
 }
 
+// Computed: total price of the basket
 const totalPrice = computed(() => {
-  let total = 0;
-  basket.map((product) => {
-    total += product.item.price * product.quantity;
-  });
-  return total;
-})
+  return basket.reduce((total, {item, quantity}) => total + item.price * quantity, 0);
+});
 
+// Computed: total items in the cart
 const itemsInCart = computed(() => {
-  let total = 0;
-  basket.map((product) => {
-    total += product.quantity;
-  })
-  return total;
-})
+  return basket.reduce((total, {quantity}) => total + quantity, 0);
+});
 
-type Products = Product[]
-
-
-const productData: Products = [{
-  id: "0001",
-  name: "Burger",
-  description: "A lovely burger",
-  price: 50,
-  img: "src/assets/front-view-tasty-meat-burger-with-cheese-salad-dark-background.png"
-},
+const productData: Product[] = [
+  {
+    id: "0001",
+    name: "Burger",
+    description: "A lovely burger",
+    price: 50,
+    img: "src/assets/front-view-tasty-meat-burger-with-cheese-salad-dark-background.png",
+  },
   {
     id: "0002",
     name: "Pizza",
     description: "Baked in a stone oven",
     price: 65,
-    img: "src/assets/pizza-time-tasty-homemade-traditional-pizza-italian-recipe.png"
+    img: "src/assets/pizza-time-tasty-homemade-traditional-pizza-italian-recipe.png",
   },
   {
     id: "0003",
     name: "Sandwich",
     description: "Meats and cheese",
     price: 49,
-    img: "src/assets/tasty-sandwich-with-vegetables-ham-cheese.png"
+    img: "src/assets/tasty-sandwich-with-vegetables-ham-cheese.png",
   },
   {
     id: "0004",
     name: "Garlic bread",
     description: "Very garlicky",
     price: 49,
-    img: "src/assets/png-baked-garlic-bread-isolated-white-background-top-view.png"
-  }
-]
-
+    img: "src/assets/png-baked-garlic-bread-isolated-white-background-top-view.png",
+  },
+];
 </script>
+
 
 <template>
   <header>
@@ -99,14 +91,12 @@ const productData: Products = [{
   </header>
 
   <main>
-
     <section class="products">
       <div class="products-top">
-      <h2>Available Products</h2>
+        <h2>Available Products</h2>
         <div class="cart-div">
-          <button @click="isCartOpen = !isCartOpen">
+          <button @click="toggleCart">
             <div class="cart-container">
-
               <span class="cart-badge" v-if="itemsInCart > 0">{{ itemsInCart }}</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20">
                 <path
@@ -115,8 +105,8 @@ const productData: Products = [{
             </div>
           </button>
         </div>
-
       </div>
+
       <ul class="items-ul">
         <li v-for="product in productData" :key="product.id" class="product-item">
           <div class="item">
@@ -124,32 +114,30 @@ const productData: Products = [{
             <img :src="product.img" :alt="product.name" class="product-img"/>
             <div class="product-bottom">
               <p class="product-description">{{ product.description }}</p>
-              <a @click="addToCart(product)">
-              <div class="product-price">
+              <div class="product-price" @click="addToCart(product)">
                 <a>+</a>
                 <p class="price">{{ product.price }} kr.</p>
               </div>
-              </a>
             </div>
           </div>
         </li>
       </ul>
     </section>
 
-    <Cart v-if="isCartOpen"
-          @toggleCart="isCartOpen = false"
-          :basket="basket"
-          :totalPrice="totalPrice"
-          @addToCart="addToCart"
-          @removeFromBasket="removeFromBasket"
-          @clearBasket="clearBasket"
-
+    <Cart
+        v-if="isCartOpen"
+        @toggleCart="toggleCart"
+        :basket="basket"
+        :totalPrice="totalPrice"
+        @addToCart="addToCart"
+        @removeFromBasket="removeFromBasket"
+        @clearBasket="clearBasket"
     />
   </main>
 </template>
 
+
 <style scoped>
-/* Basic layout and typography */
 header {
   text-align: center;
   margin-bottom: 20px;
@@ -215,7 +203,6 @@ h1, h2 {
 }
 
 
-/* Styling for product section */
 
 main {
   border: #f1f1f1 solid 1px;
@@ -229,21 +216,20 @@ main {
 
 .products ul {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Two items per row */
-  gap: 20px; /* Adds spacing between grid items */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
   padding: 0;
 }
 
 @media (max-width: 970px) {
   .products ul {
-    grid-template-columns: repeat(2, 1fr); /* Two items per row */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* On small screens (like mobile), display one item per row */
 @media (max-width: 675px) {
   .products ul {
-    grid-template-columns: 1fr; /* One item per row */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -267,10 +253,6 @@ main {
 .item h3 {
   margin-top: 0;
 }
-
-
-
-
 
 
 .product-price {
