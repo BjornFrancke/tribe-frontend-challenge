@@ -342,20 +342,6 @@ main {
 }
 
 
-.basket-item-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f1f1f1;
-  padding: 15px;
-  border-radius: 10px;
-}
-
-.subtotal {
-  font-weight: bold;
-}
-
-
 .product-img {
   height: 150px;
   width: auto;
@@ -372,27 +358,4 @@ main {
   align-items: center;
 }
 
-.clear-btn {
-  margin-top: 20px;
-  padding: 6px 12px;
-  background-color: crimson;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.clear-btn:hover {
-  background-color: darkred;
-}
-
-.empty-basket {
-  text-align: center;
-  color: grey;
-}
-
-.total {
-  font-weight: bold;
-  margin-top: 15px;
-}
 </style>
