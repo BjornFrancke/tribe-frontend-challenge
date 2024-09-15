@@ -19,11 +19,9 @@ function toggleCart() {
 }
 
 function addToCart(newProduct): void {
-  console.log("Adding " + newProduct.name)
   const basketItem = basket.find(b => b.item.name === newProduct.name);
   if (basketItem) {
     basketItem.quantity++;
-    console.log("New amount: " + basketItem.quantity);
   } else {
     basket.push({item: newProduct, quantity: 1});
   }
@@ -33,7 +31,6 @@ function removeFromBasket(item: Product): void {
   const basketItem = basket.find(b => b.item.name === item.name);
   if (basketItem && basketItem.quantity > 0) {
     basketItem.quantity--;
-    console.log("Removing 1");
     if (basketItem.quantity === 0) {
       const index = basket.indexOf(basketItem);
       basket.splice(index, 1);
